@@ -1843,29 +1843,39 @@ function library:Init(key)
                     end
                 end)
 
-                local TextChatService = game:GetService("TextChatService")
-                local UserInputService = game:GetService("UserInputService")
-                local TweenService = game:GetService("TweenService")
-    
-                local ChatTextBox = TextChatService:WaitForChild("TextChatInput"):WaitForChild("TextBox")
-    
-                if UserInputService.WindowFocused then
-                    UserInputService.InputBegan:Connect(function(input, processed)
-                        if not processed then
-                            if input.KeyCode == ChosenKey and not ChatTextBox:IsFocused() then
-                                On = not On
-    
-                                local SizeOn = On and UDim2.new(0, 12, 0, 12) or UDim2.new(0, 0, 0, 0)
-                                local Transparency = On and 0 or 1
-  
-                                TweenService:Create(toggleDesign, TweenTable["toggle_form"], {Size = SizeOn}):Play()
-                                TweenService:Create(toggleDesign, TweenTable["toggle_form"], {BackgroundTransparency = Transparency}):Play()
-      
-                              callback_t(On)
-                            end
-                        end
-                    end)
-                end
+local TextChatService = game:GetService("TextChatService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local ChatTextBox = TextChatService:WaitForChild("TextChatInput", 5) -- Add a timeout of 5 seconds
+if ChatTextBox then
+    ChatTextBox = ChatTextBox:FindFirstChild("TextBox")
+    if not ChatTextBox then
+        warn("TextBox not found under TextChatInput.")
+        return
+    end
+else
+    warn("TextChatInput not found in TextChatService.")
+    return
+end
+
+if UserInputService.WindowFocused then
+    UserInputService.InputBegan:Connect(function(input, processed)
+        if not processed then
+            if input.KeyCode == ChosenKey and not ChatTextBox:IsFocused() then
+                On = not On
+
+                local SizeOn = On and UDim2.new(0, 12, 0, 12) or UDim2.new(0, 0, 0, 0)
+                local Transparency = On and 0 or 1
+
+                TweenService:Create(toggleDesign, TweenTable["toggle_form"], {Size = SizeOn}):Play()
+                TweenService:Create(toggleDesign, TweenTable["toggle_form"], {BackgroundTransparency = Transparency}):Play()
+
+                callback_t(On)
+            end
+        end
+    end)
+end
     
                 local ExtraKeybindFunctions = {}
                 function ExtraKeybindFunctions:SetKey(new)
