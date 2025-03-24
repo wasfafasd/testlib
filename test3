@@ -2097,14 +2097,23 @@ end
 local TextChatService = game:GetService("TextChatService")
 local UserInputService = game:GetService("UserInputService")
 
-local ChatTextBox = TextChatService:WaitForChild("TextChatInput"):WaitForChild("TextBox")
+local ChatInput = TextChatService:WaitForChild("TextChatInput", 5) -- Adds a timeout of 5 seconds
+if not ChatInput then
+    warn("TextChatInput not found in TextChatService.")
+    return
+end
+
+local ChatTextBox = ChatInput:FindFirstChild("TextBox")
+if not ChatTextBox then
+    warn("TextBox not found under TextChatInput.")
+    return
+end
 
 if UserInputService.WindowFocused then
     UserInputService.InputBegan:Connect(function(input, processed)
         if not processed then
             if input.KeyCode == ChosenKey and not ChatTextBox:IsFocused() then
                 callback(ChosenKey)
-                return
             end
         end
     end)
