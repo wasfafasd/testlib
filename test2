@@ -2094,17 +2094,21 @@ end
                 end
             end)
 
-            local ChatTextBox = Player.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-            if UserInputService.WindowFocused then
-                UserInputService.InputBegan:Connect(function(c, p)
-                    if not p then
-                        if c.KeyCode.Name == ChosenKey and not ChatTextBox:IsFocused() then
-                            callback(ChosenKey)
-                            return
-                        end
-                    end
-                end)
+local TextChatService = game:GetService("TextChatService")
+local UserInputService = game:GetService("UserInputService")
+
+local ChatTextBox = TextChatService:WaitForChild("TextChatInput"):WaitForChild("TextBox")
+
+if UserInputService.WindowFocused then
+    UserInputService.InputBegan:Connect(function(input, processed)
+        if not processed then
+            if input.KeyCode == ChosenKey and not ChatTextBox:IsFocused() then
+                callback(ChosenKey)
+                return
             end
+        end
+    end)
+end
 
             UpdatePageSize()
 
